@@ -30,8 +30,8 @@ const ContactList = ({ contacts, isChannel = false }) => {
             selectedChatData
               ? selectedChatData._id === contact._id
                 ? "bg-[#8417ff] hover:bg-[#8417ff]/90 text-white"
-                : "hover:bg-[#f1f1f111]"
-              : ""
+                : "hover:bg-[#ffffff22]"
+              : "hover:bg-[#ffffff22]"
           }`}
           onClick={() => handleClick(contact)}
         >
@@ -46,9 +46,11 @@ const ContactList = ({ contacts, isChannel = false }) => {
                   />
                 ) : (
                   <div
-                    className={`uppercase h-10 w-10 flex items-center justify-center text-lg border-[1px] rounded-full ${getColor(
-                      contact.color
-                    )} `}
+                    className={`${
+                      selectedChatData && selectedChatData._id === contact._id
+                        ? "bg-[#ffffff22] border-white/70 border "
+                        : `${getColor(contact.color)}`
+                    } uppercase h-10 w-10 flex items-center justify-center text-lg border-[1px] rounded-full`}
                   >
                     {contact.firstName
                       ? contact.firstName.trim().charAt(0)
@@ -56,6 +58,16 @@ const ContactList = ({ contacts, isChannel = false }) => {
                   </div>
                 )}
               </Avatar>
+            )}
+            {isChannel && (
+              <div className="bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full">
+                #
+              </div>
+            )}
+            {isChannel ? (
+              <span>{contact.name}</span>
+            ) : (
+              <span>{`${contact.firstName} ${contact.lastName}`}</span>
             )}
           </div>
         </div>

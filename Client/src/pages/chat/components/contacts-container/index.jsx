@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api-client";
 import { GET_DM_CONTACTS } from "@/utils/constants";
 import ContactList from "@/components/ui/contactList";
+import CreateChannel from "./components/CreateChannel";
 
 const ContactsContainer = () => {
   const { closeChat, setDirectMessagesContacts, directMessagesContacts } = useAppStore();
@@ -60,6 +61,7 @@ const ContactsContainer = () => {
       <div className="my-5">
         <div className="flex items-center justify-between pr-5">
           <Title text="Channels" />
+          <CreateChannel />
         </div>
       </div>
       <ProfileInfo />

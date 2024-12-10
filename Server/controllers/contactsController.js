@@ -28,6 +28,20 @@ export const searchContact = async (request, response, next) => {
   }
 };
 
+export const getAllContacts = async (request, response, next) => {
+  try {
+    const users = await User.find({ _id: { $ne: request.userId } }, "firstName lastName email _id");
+
+    const contacts = users.map((user) => ({
+      label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+    }))
+    
+    return response.status(200).json({ contacts });
+  } catch (error) {
+    return response.status(500).send({ message: "internal server error!" });
+  }
+};
+
 export const getContactsForDmList = async (request, response, next) => {
   try {
     const { userId } = request;
@@ -47,7 +61,7 @@ export const getContactsForDmList = async (request, response, next) => {
       {
         $addFields: {
           otherParty: {
-            $cond: { if: { $eq: ["$sender", userId] }, then: "$recipient", else: "$sender" },
+            $cond: { if: { $eq: ["$sender", objectId] }, then: "$recipient", else: "$sender" },
           },
         },
       },
@@ -67,6 +81,11 @@ export const getContactsForDmList = async (request, response, next) => {
       },
       {
         $unwind: "$contactInfo",
+      },
+      {
+        $match: {
+          "contactInfo._id": { $ne: objectId }, // Exclude own account
+        },
       },
       {
         $project: {
