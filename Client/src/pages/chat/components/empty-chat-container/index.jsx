@@ -12,7 +12,7 @@ const EmptyChatContainer = () => {
       />
       <div className="text-white text-opacity-80 mt-10 flex flex-col text-center gap-5 lg:text-4xl text-3xl transition-all duration-300 items-center">
         <h3 className="poppins-medium">
-          Hi <span className="text-purple-500">!</span> Welcome to <span className="text-purple-500 ">Tik Talk</span> Chat App<span className="text-purple-500">!</span>
+          Hi<span className="text-purple-500">!</span> Welcome to <span className="text-purple-500 ">Tik Talk</span> Chat App<span className="text-purple-500">!</span>
         </h3>
       </div>
     </div>

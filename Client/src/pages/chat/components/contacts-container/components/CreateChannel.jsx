@@ -17,14 +17,14 @@ import { apiClient } from "@/lib/api-client";
 import {
   CREATE_CHANNEL,
   GET_ALL_CONTACTS,
-  SEARCH_CONTACT,
 } from "@/utils/constants";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
 import MultipleSelector from "@/components/ui/multipleSelect";
+import { toast } from "sonner";
 
 const CreateChannel = () => {
-  const { setSelectedChatData, setSelectedChatType, addChannel } =
+  const { addChannel } =
     useAppStore();
   const [newChannelModal, setNewChannelModal] = useState(false);
   const [allContacts, setAllContacts] = useState([]);
@@ -43,10 +43,16 @@ const CreateChannel = () => {
 
   const createChannel = async () => {
     try {
-      if (channelName.trim().length === 0) return;
-      if (selectedContacts.length === 0) return;
+      if (channelName.trim().length === 0) {
+        toast.error("Channel name is required!");
+        return
+      }
+      if (selectedContacts.length === 0) {
+        toast.error("Select at least one contact!");
+        return
+      }
       if (channelName.trim().length > 0) {
-        const response = apiClient.post(
+        const response = await apiClient.post(
           CREATE_CHANNEL,
           {
             name: channelName,
