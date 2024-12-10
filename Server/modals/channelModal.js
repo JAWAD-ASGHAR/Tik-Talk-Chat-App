@@ -8,13 +8,13 @@ const channelSchema = new mongoose.Schema({
   members: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "user",
       required: true,
     },
   ],
   admin: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: "user",
     required: true,
   },
   messages: [

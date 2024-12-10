@@ -1,5 +1,6 @@
 import { Server as SocketIoServer } from "socket.io";
 import Message from "./modals/messageModal.js";
+import Channel from "./modals/channelModal.js";
 
 const setupSocket = (server) => {
   const io = new SocketIoServer(server, {
@@ -33,11 +34,51 @@ const setupSocket = (server) => {
       .populate("recipient", "id email firstName lastName image color");
 
     if (recipientSocketId) {
-        io.to(recipientSocketId).emit("recievedMessage", messageData);
+      io.to(recipientSocketId).emit("recievedMessage", messageData);
     }
 
     if (senderSocketId) {
-        io.to(senderSocketId).emit("recievedMessage", messageData);
+      io.to(senderSocketId).emit("recievedMessage", messageData);
+    }
+  };
+
+  const sendChannelMessage = async (message) => {
+    const { sender, content, channelId, messageType, fileURL } = message;
+
+    const createMessage = await Message.create({
+      sender,
+      recipient: null,
+      content,
+      messageType,
+      timeStamp: new Date(),
+      fileURL,
+    });
+
+    const messageData = await Message.findById(createMessage._id)
+      .populate("sender", "id email firstName lastName image color")
+      .exec();
+
+    await Channel.findByIdAndUpdate(channelId, {
+      $push: {
+        messages: createMessage._id,
+      },
+    });
+
+    const channel = await Channel.findById(channelId).populate("members");
+
+    const finalData = { ...messageData._doc, channelId: channel._id };
+
+    if (channel && channel.members) {
+      channel.members.forEach((member) => {
+        const memberSocketId = userSocketMap.get(member._id.toString());
+        if (memberSocketId) {
+          io.to(memberSocketId).emit("recievedChannelMessage", finalData);
+        }
+      });
+      const adminSocketId = userSocketMap.get(channel.admin._id.toString());
+      if (adminSocketId) {
+        io.to(adminSocketId).emit("recievedChannelMessage", finalData);
+      }
     }
   };
 
@@ -51,7 +92,7 @@ const setupSocket = (server) => {
     }
 
     socket.on("sendMessage", sendMessage);
-
+    socket.on("sendChannelMessage", sendChannelMessage);
     socket.on("disconnect", () => disconnect(socket));
   });
 };
