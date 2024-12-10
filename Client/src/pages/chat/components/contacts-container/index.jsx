@@ -45,7 +45,7 @@ const ContactsContainer = () => {
         });
   
         if (response.data.contacts) {
-          console.log("Fetched contacts:", response.data.contacts);
+          // console.log("Fetched contacts:", response.data.contacts);
   
           // Deep compare contacts before setting state
           if (!deepEqual(response.data.contacts, directMessagesContacts)) {

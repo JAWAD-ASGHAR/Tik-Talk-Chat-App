@@ -30,7 +30,7 @@ export const SocketProvider = ({ children }) => {
   
         // Inline the handler to avoid the warning
         socket.current.on("recievedMessage", (message) => {
-          const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
+          const { selectedChatData, selectedChatType, addMessage, addContactsInDMContacts } = useAppStore.getState();
 
           if (
             selectedChatType !== undefined &&
@@ -39,14 +39,16 @@ export const SocketProvider = ({ children }) => {
             // console.log("Message received:", message);
             addMessage(message);
           }
+          addContactsInDMContacts(message);
         });
 
         socket.current.on("recievedChannelMessage", (message) => {
-          const {selectedChatData, selectedChatType, addMessage} = useAppStore.getState(); 
+          const {selectedChatData, selectedChatType, addMessage, addChannelInChannelList} = useAppStore.getState(); 
 
           if(selectedChatType !== undefined && selectedChatData._id === message.channelId){
             addMessage(message);
           }
+          addChannelInChannelList(message);
         });
   
         return () => {

@@ -62,7 +62,7 @@ export const login = async (request, response, next) => {
       secure: true,
       sameSite: "none",
     });
-    console.log("User logged in successfully:", user.id);
+    // console.log("User logged in successfully:", user.id);
     return response.status(200).json({
       user: {
         id: user.id,

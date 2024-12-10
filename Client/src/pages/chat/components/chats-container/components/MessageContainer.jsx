@@ -125,7 +125,7 @@ const MessageContainer = () => {
       const messageDate = moment(message.timeStamp).format("YYYY-MM-DD");
       const showDate = messageDate !== lastDate;
       lastDate = messageDate;
-      console.log(message);
+      // console.log(message);
       return (
         <div key={index}>
           {showDate && (
@@ -141,8 +141,8 @@ const MessageContainer = () => {
   };
 
   const renderChannelMessages = (message) => {
-    console.log("rendering channel messages",message);
-    console.log("USERINFO here", userInfo);
+    // console.log("rendering channel messages",message);
+    // console.log("USERINFO here", userInfo);
     return (
       <div
         className={`mt-5 ${

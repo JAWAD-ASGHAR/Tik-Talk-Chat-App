@@ -63,7 +63,7 @@ const Auth = () => {
           else navigate("/profile");
         }
         toast.success("Logged in successfully!");
-        console.log(response);
+        // console.log(response);
       } catch (error) {
         toast.error("Invalid login details!");
         console.error(error);
@@ -84,7 +84,7 @@ const Auth = () => {
         navigate("/profile");
       }
       toast.success("Signed up successfully!");
-      console.log(response);
+      // console.log(response);
      } catch (error) {
       toast.error("Failed to sign up!");
       console.error(error);

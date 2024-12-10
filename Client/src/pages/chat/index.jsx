@@ -24,10 +24,6 @@ const Chat = () => {
     }
   }, [userInfo, navigate]);
 
-  useEffect(() => {
-    console.log("Chat");
-  }, []);
-
   return (
     <div className="flex h-[100vh] text-white overflow-hidden">
       { isUploading &&

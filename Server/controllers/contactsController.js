@@ -106,7 +106,7 @@ export const getContactsForDmList = async (request, response, next) => {
     ]);
 
     if (!contacts || contacts.length === 0) {
-      console.log("No matching messages found for userId:", userId);
+      // console.log("No matching messages found for userId:", userId);
       return response.status(404).send({ message: "No contacts found for this user." });
     }
 
