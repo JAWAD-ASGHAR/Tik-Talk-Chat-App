@@ -1,10 +1,11 @@
+import { deepEqual } from "@/lib/utils";
+
 export const createChatSlice = (set, get) => ({
   selectedChatType: undefined,
   selectedChatData: undefined,
   selectedChatMessages: [],
   setSelectedChatType: (selectedChatType) => set({ selectedChatType }),
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
-  directMessagesContacts: [],
   isUploading: false,
   isDownloading: false,
   fileUploadProgress: 0,
@@ -12,20 +13,32 @@ export const createChatSlice = (set, get) => ({
   setIsUploading: (isUploading) => set({ isUploading }),
   setIsDownloading: (isDownloading) => set({ isDownloading }),
   setFileUploadProgress: (fileUploadProgress) => set({ fileUploadProgress }),
-  setFileDownloadProgress: (fileDownloadProgress) => set({ fileDownloadProgress }),
+  directMessagesContacts: [],
+  channels: [],
   setDirectMessagesContacts: (newContacts) => {
     const currentContacts = get().directMessagesContacts;
-
-    // Only update state if the data is different
-    if (JSON.stringify(newContacts) !== JSON.stringify(currentContacts)) {
+    if (!deepEqual(newContacts, currentContacts)) {
       set({ directMessagesContacts: newContacts });
     }
   },
+  setChannels: (newChannels) => {
+    const currentChannels = get().channels;
+    if (!deepEqual(newChannels, currentChannels)) {
+      set({ channels: newChannels });
+    }
+  },
+  addChannel: (channel) => {
+    const channels = get().channels;
+    set({ channels: [channel, ...channels] });
+  },
+  setFileDownloadProgress: (fileDownloadProgress) =>
+    set({ fileDownloadProgress }),
   setSelectedChatMessages: (selectedChatMessages) =>
     set({ selectedChatMessages }),
   addMessage: (message) => {
     const selectedChatMessages = get().selectedChatMessages;
     const selectedChatType = get().selectedChatType;
+
     set({
       selectedChatMessages: [
         ...selectedChatMessages,

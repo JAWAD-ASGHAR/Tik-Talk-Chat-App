@@ -3,45 +3,67 @@ import NewDM from "./components/NewDM";
 import ProfileInfo from "./components/ProfileInfo";
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api-client";
-import { GET_DM_CONTACTS } from "@/utils/constants";
+import { GET_DM_CONTACTS, GET_USER_CHANNELS } from "@/utils/constants";
 import ContactList from "@/components/ui/contactList";
 import CreateChannel from "./components/CreateChannel";
+import { deepEqual } from "@/lib/utils";
 
 const ContactsContainer = () => {
-  const { closeChat, setDirectMessagesContacts, directMessagesContacts } = useAppStore();
+  const { closeChat, setDirectMessagesContacts, directMessagesContacts, channels, setChannels } = useAppStore();
   const [contactsLoaded, setContactsLoaded] = useState(false); // State to track if contacts are loaded
+  const [channelsLoaded, setChannelsLoaded] = useState(false);
 
+  useEffect(() => {
+    const getChannels = async () => {
+      try {
+        const response = await apiClient.get(GET_USER_CHANNELS, {
+          withCredentials: true,
+        });
+        if (response.data.channels) {
+          // Deep compare channels before setting state
+          if (!deepEqual(response.data.channels, channels)) {
+            setChannels(response.data.channels);
+          }
+          setChannelsLoaded(true);
+        }
+      } catch (error) {
+        console.error("Error fetching channels:", error);
+      }
+    };
+  
+    if (!channelsLoaded) {
+      getChannels();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channels, channelsLoaded]);
+  
   useEffect(() => {
     const getDmContacts = async () => {
       try {
         const response = await apiClient.get(GET_DM_CONTACTS, {
           withCredentials: true,
         });
-
+  
         if (response.data.contacts) {
           console.log("Fetched contacts:", response.data.contacts);
-
-          // Only update state if contacts are different
-          if (
-            JSON.stringify(response.data.contacts) !==
-            JSON.stringify(directMessagesContacts)
-          ) {
+  
+          // Deep compare contacts before setting state
+          if (!deepEqual(response.data.contacts, directMessagesContacts)) {
             setDirectMessagesContacts(response.data.contacts);
           }
-
-          setContactsLoaded(true); // Mark contacts as loaded
+  
+          setContactsLoaded(true);
         }
       } catch (error) {
         console.error("Error fetching contacts:", error);
       }
     };
-
-    // Fetch contacts only if they are not already loaded
+  
     if (!contactsLoaded) {
       getDmContacts();
     }
-  }, [contactsLoaded, setDirectMessagesContacts, directMessagesContacts]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [directMessagesContacts, contactsLoaded]);
   
 
   return (
@@ -62,6 +84,9 @@ const ContactsContainer = () => {
         <div className="flex items-center justify-between pr-5">
           <Title text="Channels" />
           <CreateChannel />
+        </div>
+        <div className="overflow-y-auto max-h-[38vh] scrollbar-hidden">
+          <ContactList contacts={channels} isChannel={true}/>
         </div>
       </div>
       <ProfileInfo />
